@@ -53,7 +53,6 @@ class MotionLogic:
 
 	# Methods -------------------------------------------------------------------------------------------------
     def Notify(self):
-		#TODO - PRENDRE 3 PHOTO ET ENVOYER UN ARRAY
         _filename = time.strftime('%Y%m%d%H%M%S') + '.jpg'
         self.Camera.capture(_filename, resize=(self.Width/2, self.Height/2))
         subprocess.Popen(['sudo', 'python', 'notify.py', _filename])
@@ -70,7 +69,15 @@ class MotionLogic:
 
     def StartRecording(self):
         if not self.isRecording:
-            #self.Notify()
+
+            current_hour = datetime.now().hour
+            if current_hour >= 21 and current_hour <= 5:
+                self.Camera.exposure_mode = "night"
+            else:
+                self.Camera.exposure_mode = "auto"
+
+            self.Notify()
+
             ts = datetime.now()
             if self.useDateAsFolders:
                 self.folderPath = self.filepath +"%04d%02d%02d" % ( ts.year, ts.month, ts.day )
